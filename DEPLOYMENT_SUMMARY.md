@@ -1,6 +1,6 @@
 # Deployment Summary
 
-This document summarizes the work done to prepare the MERN Role-Based Dashboard application for deployment.
+This document summarizes the work done to prepare the MERN Role-Based Dashboard application for deployment to Render (backend) and Vercel (frontend).
 
 ## Issues Fixed
 
@@ -19,6 +19,19 @@ This document summarizes the work done to prepare the MERN Role-Based Dashboard 
    - Updated README.md with deployment instructions reference
    - Configured backend to serve frontend static files in production
    - Verified all environment configurations
+
+## Platform-Specific Configurations
+
+### Render Deployment (Backend)
+- Created `backend/render.yaml` for Render deployment
+- Created `backend/.env.render` with Render-specific environment variables
+- Updated backend configuration for Render compatibility
+
+### Vercel Deployment
+- Updated `backend/vercel.json` for proper API routing
+- Created `backend/.env.vercel` with Vercel-specific environment variables
+- Created `frontend/.env.vercel` with Vercel-specific API URL
+- Updated axios configuration to use environment variables
 
 ## Testing Status
 
@@ -40,6 +53,7 @@ This document summarizes the work done to prepare the MERN Role-Based Dashboard 
 - Environment configurations in place
 - Documentation updated
 - Static file serving configured
+- Platform-specific configurations implemented
 
 ## Deployment Instructions
 
@@ -49,12 +63,18 @@ For detailed deployment instructions, please refer to [DEPLOYMENT.md](DEPLOYMENT
 
 1. **Backend Configuration**
    - `backend/.env` - Environment variables
+   - `backend/.env.render` - Render deployment environment variables
+   - `backend/.env.vercel` - Vercel deployment environment variables
    - `backend/vercel.json` - Vercel deployment configuration
+   - `backend/render.yaml` - Render deployment configuration
    - `backend/server.js` - Updated to serve frontend files in production
 
 2. **Frontend Configuration**
-   - `frontend/.env` - API URL configuration
+   - `frontend/.env` - Development API URL
+   - `frontend/.env.production` - Production API URL (Render)
+   - `frontend/.env.vercel` - Vercel deployment API URL
    - `frontend/vercel.json` - Vercel deployment configuration
+   - `frontend/src/api/axiosInstance.js` - Updated to use environment variables
 
 ## Environment Variables Required
 
@@ -87,4 +107,4 @@ After deployment, verify:
 4. All API endpoints respond correctly
 5. Database operations work as expected
 
-The application is now ready for production deployment.
+The application is now ready for production deployment to Render (backend) and Vercel (frontend) with all platform-specific configurations in place.

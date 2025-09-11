@@ -26,26 +26,31 @@ Before deploying, ensure the following:
 
 ### Backend Environment Variables
 
-Create a `.env` file in the `backend` directory with the following variables:
+The application includes specific environment files for different deployment platforms:
+- `backend/.env.render` - For Render deployment
+- `backend/.env.vercel` - For Vercel deployment
+- `backend/.env.example` - Template for environment variables
 
+For production deployment, configure these variables directly in your hosting platform's dashboard rather than using the .env files.
+
+Required environment variables:
 ```env
 NODE_ENV=production
 PORT=5000
 MONGO_URI=your_production_mongodb_connection_string
-JWT_SECRET=your_strong_jwt_secret_key
+JWT_SECRET=your_strong_jwt_secret_key (at least 32 characters)
 CLIENT_URL=https://your-frontend-domain.com
 ```
 
-**Important Notes:**
-- Never commit your `.env` file to version control
-- For production deployment, configure these variables directly in your hosting platform's dashboard
-- Use a strong, unique JWT_SECRET (at least 32 characters)
-- Ensure your MONGO_URI includes authentication credentials if required
-
 ### Frontend Environment Variables
 
-Create a `.env` file in the `frontend` directory with the following variable:
+The application includes specific environment files for different deployment platforms:
+- `frontend/.env.development` - For local development
+- `frontend/.env.production` - For production deployment (Render)
+- `frontend/.env.vercel` - For Vercel deployment
+- `frontend/.env.example` - Template for environment variables
 
+Required environment variable:
 ```env
 VITE_API_URL=https://your-backend-domain.com/api
 ```
@@ -77,7 +82,12 @@ VITE_API_URL=https://your-backend-domain.com/api
 5. Configure environment variables in the Vercel dashboard:
    - Go to your project settings in Vercel
    - Navigate to the "Environment Variables" section
-   - Add all required environment variables (MONGO_URI, JWT_SECRET, etc.)
+   - Add all required environment variables:
+     - `NODE_ENV`: production
+     - `PORT`: 5000
+     - `MONGO_URI`: your MongoDB connection string
+     - `JWT_SECRET`: your JWT secret
+     - `CLIENT_URL`: your frontend URL (e.g., https://your-frontend.vercel.app)
 
 ### Frontend Deployment
 
@@ -92,7 +102,7 @@ VITE_API_URL=https://your-backend-domain.com/api
    ```
 
 3. Configure the environment variable in the Vercel dashboard:
-   - Add VITE_API_URL pointing to your backend deployment URL
+   - Add `VITE_API_URL` pointing to your backend deployment URL (e.g., https://your-backend.vercel.app/api)
 
 ## Render Deployment
 
@@ -105,21 +115,30 @@ VITE_API_URL=https://your-backend-domain.com/api
    - Start Command: `npm start`
    - Root Directory: `backend`
 4. Add environment variables in the Render dashboard:
-   - NODE_ENV: production
-   - PORT: 5000 (or let Render auto-assign)
-   - MONGO_URI: your MongoDB connection string
-   - JWT_SECRET: your JWT secret
-   - CLIENT_URL: your frontend URL
+   - `NODE_ENV`: production
+   - `PORT`: 5000 (or let Render auto-assign)
+   - `MONGO_URI`: your MongoDB connection string
+   - `JWT_SECRET`: your JWT secret
+   - `CLIENT_URL`: your frontend URL (e.g., https://your-frontend.onrender.com)
 
 ### Frontend Deployment
 
-1. Create a new Static Site on Render
-2. Connect your GitHub repository
-3. Set the following build settings:
-   - Build Command: `npm install && npm run build`
-   - Publish Directory: `frontend/dist`
-4. Add environment variables if needed:
-   - VITE_API_URL: your backend URL
+For the frontend on Render:
+
+1. Build the frontend locally:
+   ```bash
+   cd frontend
+   npm run build
+   ```
+
+2. The built files will be in the `dist` directory
+
+3. For Render deployment, you'll need to:
+   - Deploy the backend to Render first
+   - Note the backend URL
+   - Update the `VITE_API_URL` in your frontend environment to point to your Render backend
+   - Rebuild the frontend with the correct API URL
+   - Deploy the built files as a static site to Render
 
 ## Other Hosting Platforms
 
