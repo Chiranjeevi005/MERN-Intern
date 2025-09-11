@@ -207,19 +207,29 @@ After running the seed script, you can log in with the following credentials:
 
 ## Deployment
 
-For detailed deployment instructions, please refer to [DEPLOYMENT.md](DEPLOYMENT.md).
-
 ### Backend Deployment
-1. Set environment variables on your hosting platform
-2. Deploy the backend code
-3. Ensure MongoDB is accessible
+Your backend is successfully deployed at: https://mern-intern-1.onrender.com
+
+The API endpoints are available at:
+- Authentication: https://mern-intern-1.onrender.com/api/auth/
+- Student Management: https://mern-intern-1.onrender.com/api/students/
 
 ### Frontend Deployment
-1. Build the frontend:
-   ```
-   npm run build
-   ```
-2. Deploy the contents of the `dist` folder to your hosting platform
+For detailed deployment instructions for the frontend, please refer to [DEPLOYMENT_INSTRUCTIONS.md](DEPLOYMENT_INSTRUCTIONS.md).
+
+This includes step-by-step instructions for deploying to Vercel, Netlify, or Render as a static site.
+
+### Environment Variables for Production
+
+Make sure to set the following environment variables in your deployments:
+
+**Backend (Render):**
+- `MONGO_URI` - Your MongoDB connection string
+- `JWT_SECRET` - A secure secret key for JWT tokens
+- `CLIENT_URL` - Your frontend URL (e.g., https://your-frontend.vercel.app)
+
+**Frontend (Vercel/Netlify/Render):**
+- `VITE_API_URL` - Your backend URL (https://mern-intern-1.onrender.com/api)
 
 ## Contributing
 
