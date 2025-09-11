@@ -3,7 +3,7 @@ services:
     name: mern-role-dashboard-backend
     env: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm ci
     startCommand: node index.js
     envVars:
       - key: NODE_ENV
