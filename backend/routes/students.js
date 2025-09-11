@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Student = require('../models/Student');
+const User = require('../models/User');
 const auth = require('../middleware/auth');
 const roleCheck = require('../middleware/roles');
 
@@ -69,7 +70,7 @@ router.put('/me', auth, roleCheck('student'), async (req, res) => {
 // Add student (Admin only)
 router.post('/', auth, roleCheck('admin'), async (req, res) => {
   try {
-    const { name, email, course, user } = req.body;
+    const { name, email, course } = req.body;
     
     // Check if student already exists
     let student = await Student.findOne({ email });
@@ -77,18 +78,49 @@ router.post('/', auth, roleCheck('admin'), async (req, res) => {
       return res.status(400).json({ message: 'Student with this email already exists' });
     }
     
+    // Also check if a user with this email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User with this email already exists' });
+    }
+    
+    // Create a new user for the student
+    const user = new User({
+      name,
+      email,
+      password: 'student123', // Default password for students
+      role: 'student',
+      isVerified: true // Auto-verify students created by admin
+    });
+    
+    await user.save();
+    
+    // Create the student profile
     student = new Student({
       name,
       email,
       course,
-      user, // Include the user field
+      user: user._id, // Link to the user we just created
       enrollmentDate: Date.now()
     });
     
     await student.save();
-    res.status(201).json(student);
+    
+    // Return the student with the user info
+    res.status(201).json({
+      ...student.toObject(),
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
   } catch (error) {
-    console.error(error);
+    console.error('Error adding student:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Invalid student data provided' });
+    }
     res.status(500).json({ message: 'Server error' });
   }
 });

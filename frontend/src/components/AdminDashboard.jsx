@@ -36,26 +36,30 @@ const AdminDashboard = () => {
   const handleAddStudent = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.post('/students', formData);
+      const response = await axiosInstance.post('/students', formData);
       setSuccess('Student added successfully');
       setShowAddForm(false);
       setFormData({ name: '', email: '', course: '' });
       fetchStudents();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to add student');
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to add student';
+      setError(`Error: ${errorMessage}`);
+      console.error('Add student error:', err);
     }
   };
 
   const handleEditStudent = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.put(`/students/${editingStudent._id}`, formData);
+      const response = await axiosInstance.put(`/students/${editingStudent._id}`, formData);
       setSuccess('Student updated successfully');
       setEditingStudent(null);
       setFormData({ name: '', email: '', course: '' });
       fetchStudents();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update student');
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to update student';
+      setError(`Error: ${errorMessage}`);
+      console.error('Edit student error:', err);
     }
   };
 
@@ -66,7 +70,9 @@ const AdminDashboard = () => {
         setSuccess('Student deleted successfully');
         fetchStudents();
       } catch (err) {
-        setError('Failed to delete student');
+        const errorMessage = err.response?.data?.message || err.message || 'Failed to delete student';
+        setError(`Error: ${errorMessage}`);
+        console.error('Delete student error:', err);
       }
     }
   };
