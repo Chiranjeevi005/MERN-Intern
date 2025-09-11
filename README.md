@@ -237,7 +237,7 @@ For detailed deployment instructions for the frontend, please refer to [DEPLOYME
 
 4. Set the environment variable in the Vercel dashboard:
    - Name: `VITE_API_URL`
-   - Value: `https://your-backend-deployment-url.com/api` (Replace with your actual backend URL)
+   - Value: `https://mern-intern-1.onrender.com/api` (Replace with your actual backend URL)
 
 5. Redeploy your project
 

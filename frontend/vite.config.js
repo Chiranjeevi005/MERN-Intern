@@ -9,6 +9,10 @@ export default defineConfig({
     port: 3000,
     https: true
   },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true
+  },
   test: {
     environment: 'jsdom',
     setupFiles: './tests/setup.js',
