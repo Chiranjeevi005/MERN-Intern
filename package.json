@@ -21,6 +21,9 @@
   ],
   "author": "Chiranjeevi",
   "license": "MIT",
+  "dependencies": {
+    "vite": "^4.2.0"
+  },
   "devDependencies": {
     "concurrently": "^8.0.0"
   }
