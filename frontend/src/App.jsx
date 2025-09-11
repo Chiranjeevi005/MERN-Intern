@@ -36,6 +36,8 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          {/* Catch all unmatched routes and redirect to login */}
+          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </div>
     </Router>

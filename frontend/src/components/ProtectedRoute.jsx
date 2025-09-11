@@ -9,7 +9,9 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     
-    if (token && user) {
+    console.log('ProtectedRoute check:', { token, user }); // Debug log
+    
+    if (token && user && user.role) {
       setIsAuthenticated(true);
       setUserRole(user.role);
     } else {
@@ -24,15 +26,18 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
   if (!isAuthenticated) {
     // Not authenticated, redirect to login
+    console.log('Not authenticated, redirecting to login'); // Debug log
     return <Navigate to="/login" />;
   }
 
   if (requiredRole && userRole !== requiredRole) {
     // Role doesn't match, redirect to appropriate dashboard
+    console.log('Role mismatch, redirecting to:', `/${userRole}`); // Debug log
     return <Navigate to={`/${userRole}`} />;
   }
 
   // Authenticated and role matches, render children
+  console.log('Access granted to protected route'); // Debug log
   return children;
 };
 
