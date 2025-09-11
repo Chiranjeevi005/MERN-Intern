@@ -237,7 +237,7 @@ For detailed deployment instructions for the frontend, please refer to [DEPLOYME
 
 4. Set the environment variable in the Vercel dashboard:
    - Name: `VITE_API_URL`
-   - Value: `https://mern-intern-1.onrender.com/api`
+   - Value: `https://your-backend-deployment-url.com/api` (Replace with your actual backend URL)
 
 5. Redeploy your project
 
@@ -251,7 +251,7 @@ Make sure to set the following environment variables in your deployments:
 - `CLIENT_URL` - Your frontend URL (e.g., https://your-frontend.vercel.app)
 
 **Frontend (Vercel/Netlify/Render):**
-- `VITE_API_URL` - Your backend URL (https://mern-intern-1.onrender.com/api)
+- `VITE_API_URL` - Your backend URL (e.g., https://your-backend.onrender.com/api or https://your-backend.vercel.app/api)
 
 ## Contributing
 
