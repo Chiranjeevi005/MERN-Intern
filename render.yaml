@@ -3,7 +3,7 @@ services:
     name: mern-role-dashboard-backend
     env: node
     plan: free
-    buildCommand: npm ci && npm run build
+    buildCommand: npm ci && npm run build --legacy-peer-deps
     startCommand: npm start
     envVars:
       - key: NODE_ENV

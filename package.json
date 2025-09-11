@@ -12,7 +12,7 @@
     "build:full": "npm run build --prefix frontend && npm run start",
     "test": "concurrently \"npm test --prefix backend\" \"npm test --prefix frontend\"",
     "install-all": "concurrently \"npm install --prefix backend\" \"npm install --prefix frontend\"",
-    "postinstall": "cd backend && npm install && cd ../frontend && npm install"
+    "postinstall": "cd backend && npm install && cd ../frontend && npm install --legacy-peer-deps"
   },
   "keywords": [
     "MERN",
