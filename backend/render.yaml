@@ -10,3 +10,7 @@ services:
         value: production
       - key: PORT
         value: 5000
+      - key: CLIENT_URL
+        value: https://mern-intern-gamma.vercel.app
+      - key: BACKEND_URL
+        value: https://mern-intern-1.onrender.com

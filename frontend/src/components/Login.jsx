@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 
 const Login = () => {
@@ -8,12 +8,30 @@ const Login = () => {
     password: ''
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
   
   const navigate = useNavigate();
+  const location = useLocation();
   
   const { email, password } = formData;
+  
+  // Check for query parameters on component mount
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const verified = searchParams.get('verified');
+    const message = searchParams.get('message');
+    const errorMessage = searchParams.get('error');
+    
+    if (verified === 'true' && message) {
+      setSuccess(message);
+    }
+    
+    if (errorMessage) {
+      setError(errorMessage);
+    }
+  }, [location.search]);
   
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,6 +41,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuccess('');
     setVerificationSent(false);
     
     try {
@@ -57,11 +76,12 @@ const Login = () => {
   const handleResendVerification = async () => {
     setLoading(true);
     setError('');
+    setSuccess('');
     
     try {
       await axiosInstance.post('/auth/resend-verification', { email });
       setVerificationSent(true);
-      setError('Verification email resent successfully. Please check your inbox.');
+      setSuccess('Verification email resent successfully. Please check your inbox.');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to resend verification email');
     } finally {
@@ -73,6 +93,7 @@ const Login = () => {
     <div className="form-container">
       <h2>Login</h2>
       {error && !verificationSent && <div className="alert alert-error">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
       {verificationSent && (
         <div className="alert alert-info">
           A verification email has been sent to your email address. Please check your inbox.

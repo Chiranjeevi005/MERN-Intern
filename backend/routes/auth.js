@@ -19,7 +19,7 @@ router.post('/signup', async (req, res) => {
       if (!user.isVerified) {
         // Generate new verification token
         const verificationToken = user.generateAuthToken();
-        const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+        const verificationUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email/${verificationToken}`;
         
         // Send verification email
         await sendEmail({
@@ -61,7 +61,7 @@ router.post('/signup', async (req, res) => {
     const verificationToken = user.generateAuthToken();
     
     // Send verification email
-    const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+    const verificationUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email/${verificationToken}`;
     
     await sendEmail({
       to: user.email,
@@ -89,19 +89,27 @@ router.get('/verify-email/:token', async (req, res) => {
     }
     
     if (user.isVerified) {
-      return res.json({ message: 'Email already verified. You can log in now.' });
+      // If already verified, redirect to frontend login page with success message
+      const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?verified=true`;
+      return res.redirect(redirectUrl);
     }
     
     user.isVerified = true;
     await user.save();
     
-    res.json({ message: 'Email verified successfully. You can now log in.' });
+    // Redirect to frontend login page with success message
+    const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?verified=true&message=Email verified successfully. You can now log in.`;
+    res.redirect(redirectUrl);
   } catch (error) {
     console.error(error);
     if (error.name === 'TokenExpiredError') {
-      return res.status(400).json({ message: 'Verification token has expired. Please sign up again.' });
+      // Redirect to frontend login page with error message
+      const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=Verification token has expired. Please sign up again.`;
+      return res.redirect(redirectUrl);
     }
-    res.status(500).json({ message: 'Server error' });
+    // Redirect to frontend login page with generic error message
+    const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=Server error during verification`;
+    res.redirect(redirectUrl);
   }
 });
 
@@ -120,7 +128,7 @@ router.post('/login', async (req, res) => {
     if (!user.isVerified) {
       // Generate new verification token
       const verificationToken = user.generateAuthToken();
-      const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+      const verificationUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email/${verificationToken}`;
       
       // Send verification email
       await sendEmail({
@@ -173,7 +181,7 @@ router.post('/forgot-password', async (req, res) => {
     await user.save();
     
     // Send reset email
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    const resetUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/reset-password/${resetToken}`;
     
     await sendEmail({
       to: user.email,
@@ -275,7 +283,7 @@ router.post('/resend-verification', async (req, res) => {
     
     // Generate new verification token
     const verificationToken = user.generateAuthToken();
-    const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+    const verificationUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email/${verificationToken}`;
     
     // Send verification email
     await sendEmail({

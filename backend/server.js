@@ -15,8 +15,17 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? [process.env.CLIENT_URL, 'https://mern-intern-gamma.vercel.app'] 
+    : ['http://localhost:3000', 'http://localhost:5173'],
+  credentials: true
+}));
 app.use(express.json());
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/students', studentRoutes);
 
 // Serve static files from the React app build directory in production
 if (process.env.NODE_ENV === 'production') {
@@ -60,10 +69,6 @@ if (process.env.NODE_ENV === 'production') {
     });
   }
 }
-
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/students', studentRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
