@@ -9,6 +9,7 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
   
   const navigate = useNavigate();
   
@@ -22,6 +23,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setVerificationSent(false);
     
     try {
       const res = await axiosInstance.post('/auth/login', {
@@ -40,7 +42,28 @@ const Login = () => {
         navigate('/student');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred');
+      const errorMessage = err.response?.data?.message || 'An error occurred';
+      setError(errorMessage);
+      
+      // If the error indicates that a verification email was sent, update state
+      if (errorMessage.includes('verification email has been sent')) {
+        setVerificationSent(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleResendVerification = async () => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      await axiosInstance.post('/auth/resend-verification', { email });
+      setVerificationSent(true);
+      setError('Verification email resent successfully. Please check your inbox.');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to resend verification email');
     } finally {
       setLoading(false);
     }
@@ -49,7 +72,12 @@ const Login = () => {
   return (
     <div className="form-container">
       <h2>Login</h2>
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && !verificationSent && <div className="alert alert-error">{error}</div>}
+      {verificationSent && (
+        <div className="alert alert-info">
+          A verification email has been sent to your email address. Please check your inbox.
+        </div>
+      )}
       <form onSubmit={onSubmit}>
         <div className="form-group">
           <label htmlFor="email">Email</label>
@@ -77,6 +105,19 @@ const Login = () => {
           {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
+      
+      {verificationSent && (
+        <div className="form-group">
+          <button 
+            onClick={handleResendVerification} 
+            className="btn btn-secondary btn-block" 
+            disabled={loading}
+          >
+            {loading ? 'Resending...' : 'Resend Verification Email'}
+          </button>
+        </div>
+      )}
+      
       <p>
         Don't have an account? <Link to="/signup">Sign up</Link>
       </p>

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 
 const VerifyEmail = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [verified, setVerified] = useState(false);
   
   const { token } = useParams();
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const VerifyEmail = () => {
       try {
         const response = await axiosInstance.get(`/auth/verify-email/${token}`);
         setMessage(response.data.message);
+        setVerified(true);
       } catch (err) {
         setError(err.response?.data?.message || 'An error occurred during verification');
       } finally {
@@ -48,9 +50,24 @@ const VerifyEmail = () => {
       <h2>Email Verification</h2>
       {error && <div className="alert alert-error">{error}</div>}
       {message && <div className="alert alert-success">{message}</div>}
-      <button onClick={handleLoginRedirect} className="btn btn-block">
-        Go to Login
-      </button>
+      
+      {verified ? (
+        <div className="form-group">
+          <button onClick={handleLoginRedirect} className="btn btn-block">
+            Go to Login
+          </button>
+        </div>
+      ) : (
+        <div className="form-group">
+          <Link to="/login" className="btn btn-block">
+            Back to Login
+          </Link>
+        </div>
+      )}
+      
+      <p>
+        Having trouble? <Link to="/signup">Sign up again</Link> or <Link to="/login">try logging in</Link>
+      </p>
     </div>
   );
 };

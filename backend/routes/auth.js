@@ -15,7 +15,24 @@ router.post('/signup', async (req, res) => {
     // Check if user already exists
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ message: 'User already exists' });
+      // If user exists but is not verified, provide a way to resend verification
+      if (!user.isVerified) {
+        // Generate new verification token
+        const verificationToken = user.generateAuthToken();
+        const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+        
+        // Send verification email
+        await sendEmail({
+          to: user.email,
+          subject: 'Email Verification - Resend',
+          text: `Please verify your email by clicking on this link: ${verificationUrl}`
+        });
+        
+        return res.status(400).json({ 
+          message: 'User already exists but is not verified. A new verification email has been sent.' 
+        });
+      }
+      return res.status(400).json({ message: 'User already exists and is verified' });
     }
     
     // Create user
@@ -71,12 +88,19 @@ router.get('/verify-email/:token', async (req, res) => {
       return res.status(400).json({ message: 'Invalid token' });
     }
     
+    if (user.isVerified) {
+      return res.json({ message: 'Email already verified. You can log in now.' });
+    }
+    
     user.isVerified = true;
     await user.save();
     
-    res.json({ message: 'Email verified successfully' });
+    res.json({ message: 'Email verified successfully. You can now log in.' });
   } catch (error) {
     console.error(error);
+    if (error.name === 'TokenExpiredError') {
+      return res.status(400).json({ message: 'Verification token has expired. Please sign up again.' });
+    }
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -94,7 +118,20 @@ router.post('/login', async (req, res) => {
     
     // Check if email is verified
     if (!user.isVerified) {
-      return res.status(400).json({ message: 'Please verify your email' });
+      // Generate new verification token
+      const verificationToken = user.generateAuthToken();
+      const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+      
+      // Send verification email
+      await sendEmail({
+        to: user.email,
+        subject: 'Email Verification Required',
+        text: `Please verify your email by clicking on this link: ${verificationUrl}`
+      });
+      
+      return res.status(400).json({ 
+        message: 'Please verify your email. A verification email has been sent to your email address.' 
+      });
     }
     
     // Check password
@@ -216,6 +253,38 @@ router.post('/logout', auth, async (req, res) => {
     // In a real app, you would invalidate the token here
     // For JWT, we'll just send a success response
     res.json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Resend verification email
+router.post('/resend-verification', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+    
+    if (user.isVerified) {
+      return res.status(400).json({ message: 'Email already verified' });
+    }
+    
+    // Generate new verification token
+    const verificationToken = user.generateAuthToken();
+    const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+    
+    // Send verification email
+    await sendEmail({
+      to: user.email,
+      subject: 'Email Verification - Resend',
+      text: `Please verify your email by clicking on this link: ${verificationUrl}`
+    });
+    
+    res.json({ message: 'Verification email sent successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
