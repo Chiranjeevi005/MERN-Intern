@@ -107,3 +107,6 @@ frontend/.vercel/
 
 # But allow example files
 !*.example
+
+# Specifically ignore backend example file
+backend/.env.example
