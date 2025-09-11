@@ -28,14 +28,34 @@ if (process.env.NODE_ENV === 'production') {
     
     // Handle React routing, return all requests to React app
     app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+      try {
+        const filePath = path.join(distPath, 'index.html');
+        if (fs.existsSync(filePath)) {
+          res.sendFile(filePath);
+        } else {
+          // Fallback API response if index.html doesn't exist
+          res.status(200).json({ 
+            message: 'Backend API is running successfully!', 
+            api_docs: 'Use /api endpoints for backend functionality',
+            frontend_build: 'Frontend build files not found. Please build the frontend.'
+          });
+        }
+      } catch (error) {
+        // Fallback API response if there's an error serving the file
+        res.status(200).json({ 
+          message: 'Backend API is running successfully!', 
+          api_docs: 'Use /api endpoints for backend functionality',
+          frontend_build: 'Frontend build files not found. Please build the frontend.'
+        });
+      }
     });
   } else {
-    // If frontend is not built, provide a simple message
+    // If frontend dist directory doesn't exist, provide API-only response
     app.get('*', (req, res) => {
       res.status(200).json({ 
         message: 'Backend API is running successfully!', 
-        api_docs: 'Use /api endpoints for backend functionality' 
+        api_docs: 'Use /api endpoints for backend functionality',
+        frontend_build: 'Frontend build files not found. Please build and deploy the frontend separately.'
       });
     });
   }
@@ -60,5 +80,7 @@ module.exports = app;
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(`NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+    console.log(`Frontend dist path: ${path.join(__dirname, '../frontend/dist')}`);
   });
 }
