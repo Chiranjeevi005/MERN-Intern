@@ -3,4 +3,5 @@
 // Root entry point for Render deployment
 // This file is required for Render to properly start the application
 
+// Start the backend server
 require('./backend/server.js');
