@@ -5,6 +5,7 @@ const authRoutes = require('./routes/auth');
 const studentRoutes = require('./routes/students');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 dotenv.config();
 
@@ -19,12 +20,25 @@ app.use(express.json());
 
 // Serve static files from the React app build directory in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+  const distPath = path.join(__dirname, '../frontend/dist');
   
-  // Handle React routing, return all requests to React app
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-  });
+  // Check if the dist directory exists
+  if (fs.existsSync(distPath)) {
+    app.use(express.static(distPath));
+    
+    // Handle React routing, return all requests to React app
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  } else {
+    // If frontend is not built, provide a simple message
+    app.get('*', (req, res) => {
+      res.status(200).json({ 
+        message: 'Backend API is running successfully!', 
+        api_docs: 'Use /api endpoints for backend functionality' 
+      });
+    });
+  }
 }
 
 // Routes
