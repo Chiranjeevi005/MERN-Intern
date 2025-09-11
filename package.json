@@ -2,7 +2,7 @@
   "name": "mern-role-based-dashboard",
   "version": "1.0.0",
   "description": "A MERN stack application with role-based access control for managing students and user authentication",
-  "main": "index.js",
+  "main": "backend/server.js",
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
     "start": "node backend/server.js",
