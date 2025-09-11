@@ -217,7 +217,29 @@ The API endpoints are available at:
 ### Frontend Deployment
 For detailed deployment instructions for the frontend, please refer to [DEPLOYMENT_INSTRUCTIONS.md](DEPLOYMENT_INSTRUCTIONS.md).
 
-This includes step-by-step instructions for deploying to Vercel, Netlify, or Render as a static site.
+#### Quick Start for Vercel Deployment:
+
+1. Install Vercel CLI:
+   ```bash
+   npm install -g vercel
+   ```
+
+2. Login to Vercel:
+   ```bash
+   vercel login
+   ```
+
+3. Deploy the frontend:
+   ```bash
+   cd frontend
+   vercel --prod
+   ```
+
+4. Set the environment variable in the Vercel dashboard:
+   - Name: `VITE_API_URL`
+   - Value: `https://mern-intern-1.onrender.com/api`
+
+5. Redeploy your project
 
 ### Environment Variables for Production
 

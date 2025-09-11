@@ -8,76 +8,120 @@ The API endpoints are available at:
 - Authentication: https://mern-intern-1.onrender.com/api/auth/
 - Student Management: https://mern-intern-1.onrender.com/api/students/
 
-## Frontend Deployment (Vercel/Netlify/Render Static)
+## Frontend Deployment (Vercel) - Recommended Approach
 
-### Option 1: Build and Deploy Frontend Locally
+### Step 1: Install Vercel CLI
 
-1. **Build the frontend:**
-   ```bash
-   cd frontend
-   npm install
-   npm run build
-   ```
+If you haven't already, install the Vercel CLI globally:
 
-2. **Deploy the frontend:**
-   The build files will be in the `frontend/dist` directory. You can deploy these files to any static hosting service:
-   
-   **For Vercel:**
-   ```bash
-   # Install Vercel CLI if you haven't already
-   npm install -g vercel
-   
-   # Deploy the dist folder
-   cd frontend/dist
-   vercel --prod
-   ```
+```bash
+npm install -g vercel
+```
 
-   **For Netlify:**
-   - Go to https://app.netlify.com
-   - Select "New site from Git" or drag and drop the `frontend/dist` folder
+### Step 2: Login to Vercel
 
-   **For Render (Static Site):**
-   - Create a new "Static Site" in Render
-   - Point it to your repository
-   - Set the build command to: `npm run build --prefix frontend`
-   - Set the publish directory to: `frontend/dist`
+```bash
+vercel login
+```
 
-### Option 2: Separate Repository Approach
+This will open a browser window where you can log in to your Vercel account.
 
-For easier deployment, you might want to separate the frontend and backend into different repositories:
+### Step 3: Deploy the Frontend
 
-1. **Create a new repository for the frontend**
-2. **Copy the frontend files to the new repository:**
-   ```bash
-   # In a new directory
-   cp -r /path/to/your/project/frontend/* /path/to/new/frontend/repo/
-   ```
-3. **Deploy the frontend repository separately**
+Navigate to the frontend directory and deploy:
 
-### Environment Variables
+```bash
+cd frontend
+vercel --prod
+```
 
-Make sure to set the following environment variables in your frontend deployment:
+During the deployment process, Vercel will ask you several questions:
 
-- `VITE_API_URL` = `https://mern-intern-1.onrender.com/api`
+1. **Set up and deploy**: "y" (yes)
+2. **Which scope**: Select your personal account or team
+3. **Link to existing project**: "n" (no, create a new project)
+4. **What's your project's name**: You can use the default or enter a custom name
+5. **In which directory is your code located?**: `./` (current directory)
+6. **Want to override the settings?**: "n" (no)
 
-This tells your frontend where to send API requests.
+### Step 4: Configure Environment Variables in Vercel Dashboard
 
-### Testing Your Deployment
+After the initial deployment, you need to set the environment variable in the Vercel dashboard:
+
+1. Go to https://vercel.com/dashboard
+2. Find your project
+3. Click on "Settings" → "Environment Variables"
+4. Add the following environment variable:
+   - Name: `VITE_API_URL`
+   - Value: `https://mern-intern-1.onrender.com/api`
+
+### Step 5: Redeploy
+
+After adding the environment variable, redeploy your project:
+
+1. In the Vercel dashboard, go to your project
+2. Click on "Deployments"
+3. Find the latest deployment and click on the "..." menu
+4. Select "Redeploy"
+
+Alternatively, you can trigger a redeploy by making a small change to any file and pushing it to GitHub.
+
+## Alternative: Deploy Using GitHub Integration
+
+### Step 1: Connect GitHub to Vercel
+
+1. Go to https://vercel.com/dashboard
+2. Click "New Project"
+3. Click "Continue with GitHub"
+4. Install the Vercel GitHub app if prompted
+5. Import your repository
+
+### Step 2: Configure Project Settings
+
+When importing your project, configure these settings:
+
+- **Framework Preset**: Vite
+- **Root Directory**: `frontend`
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+
+### Step 3: Add Environment Variables
+
+In the "Environment Variables" section during setup, add:
+
+- Name: `VITE_API_URL`
+- Value: `https://mern-intern-1.onrender.com/api`
+
+### Step 4: Deploy
+
+Click "Deploy" and wait for the build to complete.
+
+## Environment Variables
+
+### Backend (Render):
+- `MONGO_URI` - Your MongoDB connection string
+- `JWT_SECRET` - A secure secret key for JWT tokens
+- `CLIENT_URL` - Your frontend URL (e.g., https://your-frontend.vercel.app)
+
+### Frontend (Vercel):
+- `VITE_API_URL` - Your backend URL (https://mern-intern-1.onrender.com/api)
+
+## Testing Your Deployment
 
 Once both frontend and backend are deployed:
 
-1. Visit your frontend URL
+1. Visit your frontend URL (provided by Vercel)
 2. Try to register a new user
 3. Check that you can log in
 4. Verify that the admin dashboard works (if you have admin credentials)
 5. Test student functionality
 
-### Default Credentials
+## Default Credentials
 
 - Admin: admin@example.com / admin123
 - Student: (You'll need to create student accounts or use the seed script)
 
-### Troubleshooting
+## Troubleshooting
 
 If you encounter issues:
 
@@ -85,7 +129,33 @@ If you encounter issues:
 2. **API connection issues**: Verify that `VITE_API_URL` in your frontend matches your backend URL
 3. **Missing environment variables**: Check that all required environment variables are set in both frontend and backend deployments
 
-## Alternative: Single Deployment with Pre-built Frontend
+## Alternative Deployment Options
+
+### Deploy to Netlify
+
+1. Build the frontend locally:
+   ```bash
+   cd frontend
+   npm run build
+   ```
+
+2. Drag and drop the `dist` folder to https://app.netlify.com/drop
+
+3. Set the environment variable in Netlify dashboard:
+   - Key: `VITE_API_URL`
+   - Value: `https://mern-intern-1.onrender.com/api`
+
+### Deploy to Render (Static Site)
+
+1. Create a new "Static Site" in Render
+2. Connect it to your GitHub repository
+3. Set build command: `npm run build --prefix frontend`
+4. Set publish directory: `frontend/dist`
+5. Add environment variable:
+   - Key: `VITE_API_URL`
+   - Value: `https://mern-intern-1.onrender.com/api`
+
+## Single Repository Deployment (Not Recommended)
 
 If you want to keep everything in one Render deployment:
 
@@ -95,7 +165,7 @@ If you want to keep everything in one Render deployment:
    npm run build
    ```
 
-2. **Commit the dist folder** (temporarily):
+2. **Commit the dist folder temporarily:**
    ```bash
    git add frontend/dist
    git commit -m "Add pre-built frontend for deployment"
