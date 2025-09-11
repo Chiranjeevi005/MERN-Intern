@@ -7,6 +7,28 @@ const sendEmail = require('../utils/email');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
+// Helper function to get backend URL
+const getBackendUrl = () => {
+  // In production, prefer BACKEND_URL, then RENDER_EXTERNAL_URL, then fallback
+  if (process.env.NODE_ENV === 'production') {
+    return process.env.BACKEND_URL || 
+           process.env.RENDER_EXTERNAL_URL || 
+           'https://mern-intern-1.onrender.com';
+  }
+  // In development, use localhost
+  return 'http://localhost:5000';
+};
+
+// Helper function to get client URL
+const getClientUrl = () => {
+  // In production, prefer CLIENT_URL, then fallback
+  if (process.env.NODE_ENV === 'production') {
+    return process.env.CLIENT_URL || 'https://mern-intern-gamma.vercel.app';
+  }
+  // In development, use localhost
+  return 'http://localhost:3000';
+};
+
 // Signup
 router.post('/signup', async (req, res) => {
   try {
@@ -19,10 +41,11 @@ router.post('/signup', async (req, res) => {
       if (!user.isVerified) {
         // Generate new verification token
         const verificationToken = user.generateAuthToken();
-        const verificationUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email/${verificationToken}`;
+        const backendUrl = getBackendUrl();
+        const verificationUrl = `${backendUrl}/api/auth/verify-email/${verificationToken}`;
         
         // Log for debugging
-        console.log('Resend verification - Backend URL:', process.env.BACKEND_URL);
+        console.log('Resend verification - Backend URL:', backendUrl);
         console.log('Resend verification - Generated URL:', verificationUrl);
         
         // Send verification email
@@ -65,10 +88,11 @@ router.post('/signup', async (req, res) => {
     const verificationToken = user.generateAuthToken();
     
     // Send verification email
-    const verificationUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email/${verificationToken}`;
+    const backendUrl = getBackendUrl();
+    const verificationUrl = `${backendUrl}/api/auth/verify-email/${verificationToken}`;
     
     // Log for debugging
-    console.log('Signup verification - Backend URL:', process.env.BACKEND_URL);
+    console.log('Signup verification - Backend URL:', backendUrl);
     console.log('Signup verification - Generated URL:', verificationUrl);
     
     await sendEmail({
@@ -98,7 +122,9 @@ router.get('/verify-email/:token', async (req, res) => {
     
     if (user.isVerified) {
       // If already verified, redirect to frontend login page with success message
-      const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?verified=true`;
+      const clientUrl = getClientUrl();
+      const redirectUrl = `${clientUrl}/login?verified=true`;
+      console.log('User already verified, redirecting to:', redirectUrl);
       return res.redirect(redirectUrl);
     }
     
@@ -106,17 +132,23 @@ router.get('/verify-email/:token', async (req, res) => {
     await user.save();
     
     // Redirect to frontend login page with success message
-    const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?verified=true&message=Email verified successfully. You can now log in.`;
+    const clientUrl = getClientUrl();
+    const redirectUrl = `${clientUrl}/login?verified=true&message=Email verified successfully. You can now log in.`;
+    console.log('Verification successful, redirecting to:', redirectUrl);
     res.redirect(redirectUrl);
   } catch (error) {
     console.error(error);
     if (error.name === 'TokenExpiredError') {
       // Redirect to frontend login page with error message
-      const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=Verification token has expired. Please sign up again.`;
+      const clientUrl = getClientUrl();
+      const redirectUrl = `${clientUrl}/login?error=Verification token has expired. Please sign up again.`;
+      console.log('Token expired, redirecting to:', redirectUrl);
       return res.redirect(redirectUrl);
     }
     // Redirect to frontend login page with generic error message
-    const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=Server error during verification`;
+    const clientUrl = getClientUrl();
+    const redirectUrl = `${clientUrl}/login?error=Server error during verification`;
+    console.log('Server error, redirecting to:', redirectUrl);
     res.redirect(redirectUrl);
   }
 });
@@ -136,10 +168,11 @@ router.post('/login', async (req, res) => {
     if (!user.isVerified) {
       // Generate new verification token
       const verificationToken = user.generateAuthToken();
-      const verificationUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email/${verificationToken}`;
+      const backendUrl = getBackendUrl();
+      const verificationUrl = `${backendUrl}/api/auth/verify-email/${verificationToken}`;
       
       // Log for debugging
-      console.log('Login verification - Backend URL:', process.env.BACKEND_URL);
+      console.log('Login verification - Backend URL:', backendUrl);
       console.log('Login verification - Generated URL:', verificationUrl);
       
       // Send verification email
@@ -295,10 +328,11 @@ router.post('/resend-verification', async (req, res) => {
     
     // Generate new verification token
     const verificationToken = user.generateAuthToken();
-    const verificationUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email/${verificationToken}`;
+    const backendUrl = getBackendUrl();
+    const verificationUrl = `${backendUrl}/api/auth/verify-email/${verificationToken}`;
     
     // Log for debugging
-    console.log('Resend verification - Backend URL:', process.env.BACKEND_URL);
+    console.log('Resend verification - Backend URL:', backendUrl);
     console.log('Resend verification - Generated URL:', verificationUrl);
     
     // Send verification email
