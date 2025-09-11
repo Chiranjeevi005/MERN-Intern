@@ -27,11 +27,11 @@ Before deploying, ensure the following:
 ### Backend Environment Variables
 
 The application includes specific environment files for different deployment platforms:
-- `backend/.env.render` - For Render deployment
-- `backend/.env.vercel` - For Vercel deployment
-- `backend/.env.example` - Template for environment variables
+- `backend/.env.render.example` - Template for Render deployment
+- `backend/.env.vercel.example` - Template for Vercel deployment
+- `backend/.env.example` - General template for environment variables
 
-For production deployment, configure these variables directly in your hosting platform's dashboard rather than using the .env files.
+**Important Security Note**: For production deployment, configure these variables directly in your hosting platform's dashboard rather than using the .env files. See [SECURITY.md](SECURITY.md) for detailed security guidelines.
 
 Required environment variables:
 ```env
@@ -47,13 +47,15 @@ CLIENT_URL=https://your-frontend-domain.com
 The application includes specific environment files for different deployment platforms:
 - `frontend/.env.development` - For local development
 - `frontend/.env.production` - For production deployment (Render)
-- `frontend/.env.vercel` - For Vercel deployment
-- `frontend/.env.example` - Template for environment variables
+- `frontend/.env.vercel.example` - Template for Vercel deployment
+- `frontend/.env.example` - General template for environment variables
 
 Required environment variable:
 ```env
 VITE_API_URL=https://your-backend-domain.com/api
 ```
+
+**Important Security Note**: For production deployment, configure this variable directly in your hosting platform's dashboard rather than using the .env files. See [SECURITY.md](SECURITY.md) for detailed security guidelines.
 
 ## Vercel Deployment
 
@@ -158,7 +160,7 @@ For the frontend on Render:
      cd backend
      npm install
      ```
-   - Set environment variables
+   - Set environment variables using your platform's method (NOT .env files)
    - Start the server:
      ```bash
      npm start
