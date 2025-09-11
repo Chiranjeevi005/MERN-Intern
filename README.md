@@ -207,6 +207,8 @@ After running the seed script, you can log in with the following credentials:
 
 ## Deployment
 
+For detailed deployment instructions, please refer to [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ### Backend Deployment
 1. Set environment variables on your hosting platform
 2. Deploy the backend code

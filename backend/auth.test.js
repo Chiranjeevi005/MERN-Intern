@@ -185,6 +185,8 @@ describe('Authentication API', () => {
       expect(res.body.message).toBe('Password reset successfully');
 
       // Verify password was changed by reloading the user from database
+      // Add a small delay to ensure database consistency
+      await new Promise(resolve => setTimeout(resolve, 100));
       const updatedUser = await User.findById(user._id);
       expect(updatedUser).not.toBeNull();
       const isMatch = await bcrypt.compare('newpassword123', updatedUser.password);
