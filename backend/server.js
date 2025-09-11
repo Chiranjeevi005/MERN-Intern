@@ -14,6 +14,13 @@ connectDB();
 
 const app = express();
 
+// Log environment variables for debugging
+console.log('Environment Variables:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('CLIENT_URL:', process.env.CLIENT_URL);
+console.log('BACKEND_URL:', process.env.BACKEND_URL);
+console.log('PORT:', process.env.PORT);
+
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
@@ -86,6 +93,8 @@ if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+    console.log(`CLIENT_URL: ${process.env.CLIENT_URL || 'not set'}`);
+    console.log(`BACKEND_URL: ${process.env.BACKEND_URL || 'not set'}`);
     console.log(`Frontend dist path: ${path.join(__dirname, '../frontend/dist')}`);
   });
 }

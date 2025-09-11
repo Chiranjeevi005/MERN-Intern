@@ -21,6 +21,10 @@ router.post('/signup', async (req, res) => {
         const verificationToken = user.generateAuthToken();
         const verificationUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email/${verificationToken}`;
         
+        // Log for debugging
+        console.log('Resend verification - Backend URL:', process.env.BACKEND_URL);
+        console.log('Resend verification - Generated URL:', verificationUrl);
+        
         // Send verification email
         await sendEmail({
           to: user.email,
@@ -62,6 +66,10 @@ router.post('/signup', async (req, res) => {
     
     // Send verification email
     const verificationUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email/${verificationToken}`;
+    
+    // Log for debugging
+    console.log('Signup verification - Backend URL:', process.env.BACKEND_URL);
+    console.log('Signup verification - Generated URL:', verificationUrl);
     
     await sendEmail({
       to: user.email,
@@ -129,6 +137,10 @@ router.post('/login', async (req, res) => {
       // Generate new verification token
       const verificationToken = user.generateAuthToken();
       const verificationUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email/${verificationToken}`;
+      
+      // Log for debugging
+      console.log('Login verification - Backend URL:', process.env.BACKEND_URL);
+      console.log('Login verification - Generated URL:', verificationUrl);
       
       // Send verification email
       await sendEmail({
@@ -284,6 +296,10 @@ router.post('/resend-verification', async (req, res) => {
     // Generate new verification token
     const verificationToken = user.generateAuthToken();
     const verificationUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/verify-email/${verificationToken}`;
+    
+    // Log for debugging
+    console.log('Resend verification - Backend URL:', process.env.BACKEND_URL);
+    console.log('Resend verification - Generated URL:', verificationUrl);
     
     // Send verification email
     await sendEmail({
